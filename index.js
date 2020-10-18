@@ -71,7 +71,7 @@ client.connect(err => {
                 res.send(documents[0])
             }
             else{
-                res.send('nothing')
+                res.send({'admin':'false'})
             }
         })
     })
