@@ -67,7 +67,6 @@ client.connect(err => {
         const email = req.body.admin;
         adminCollection.find({admin:email})
         .toArray((err, documents) => {
-            console.log(documents[0].admin)
             res.send(documents[0])
         })
     })
