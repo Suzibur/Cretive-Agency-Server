@@ -68,6 +68,7 @@ client.connect(err => {
         adminCollection.find({admin:email})
         .toArray((err, documents) => {
             res.send(documents[0])
+            err.send('Unable to find')
         })
     })
 });
