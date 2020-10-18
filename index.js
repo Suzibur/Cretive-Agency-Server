@@ -67,11 +67,11 @@ client.connect(err => {
         const email = req.body.admin;
         adminCollection.find({admin:email})
         .toArray((err, documents) => {
-            if(documents[0].length === 0){
-                res.send('nothing')
+            if(documents[0].length > 0){
+                res.send(documents[0])
             }
             else{
-                res.send(documents[0])
+                res.send('nothing')
             }
         })
     })
