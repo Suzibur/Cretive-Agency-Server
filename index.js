@@ -68,10 +68,10 @@ client.connect(err => {
         adminCollection.find({admin:email})
         .toArray((err, documents) => {
             if(documents[0]){
-                res.send({'admin':'true'})
+                res.send({'admin': true})
             }
             else{
-                res.send({'admin':'false'})
+                res.send({'admin': false})
             }
         })
     })
