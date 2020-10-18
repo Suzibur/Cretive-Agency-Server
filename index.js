@@ -67,8 +67,12 @@ client.connect(err => {
         const email = req.body.admin;
         adminCollection.find({admin:email})
         .toArray((err, documents) => {
-            res.send(documents[0])
-            err.send('Unable to find')
+            if(documents[0].length === 0){
+                res.send('nothing')
+            }
+            else{
+                res.send(documents[0])
+            }
         })
     })
 });
