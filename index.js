@@ -10,7 +10,6 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(express.static('service'))
 app.use(fileUpload());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.wanio.mongodb.net/CreativeAgency?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -37,6 +36,13 @@ client.connect(err => {
         serviceCollection.find({})
         .toArray((err, documents) => {
             res.send(documents)
+        })
+    })
+    app.get('/byCategory', (req,res) => {
+        const category = req.query.category;
+        serviceCollection.find({category:category})
+        .toArray((err,documents) => {
+            res.send(documents);
         })
     })
     const feedbackCollection = client.db("CreativeAgency").collection("Feedback");
@@ -75,6 +81,40 @@ client.connect(err => {
             }
         })
     })
+    const orderCollection = client.db("CreativeAgency").collection("Order");
+    app.post('/placeOrder', (req, res) => {
+        const client = req.body.client;
+        const email = req.body.email;
+        const orderDate = req.body.date;
+        const category = req.body.category;
+        const orderDetails = req.body.orderDetails;
+        const price = req.body.price;
+        const file = req.files.file;
+        const newImg = req.files.file.data;
+        const encImg = newImg.toString('base64')
+        const img = {
+            contentType: file.mimetype,
+            size: file.size,
+            img: Buffer.from(encImg, 'base64')
+        }
+        orderCollection.insertOne({client,email,orderDate,category,orderDetails,price,img})
+        .then( result => {
+            res.send(result.insertedCount > 0)
+        })
+    })
+    app.get('/allOrder', (req,res) => {
+        orderCollection.find({})
+        .toArray((err,documents) => {
+            res.send(documents);
+        })
+    })
+    app.get('/orderbyUser', (req,res) => {
+        const userEmail = req.query.email;
+        orderCollection.find({email:userEmail})
+        .toArray((err, documents) => {
+            res.send(documents)
+        })
+    })
 });
 
-app.listen(process.env.PORT || 7000, console.log('Running'));
+app.listen(process.env.PORT || 7000);
